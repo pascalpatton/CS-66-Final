@@ -3,13 +3,13 @@ from entities import Hero
 
 #this defines valid commands a user to input
 VALID_COMMANDS = ["look", "move", "fight", "inventory", "use", "quest", "path", "help", "exit"]
-
-
+button = ""
+#this is the intro/starting scene
 def showintro():
     print("==================================================DUNGEONEER==================================================")
     usrinput = input("Enter X to continue:")
 
-    if usrinput == "X" or "x":
+    if usrinput == "X" or usrinput == "x":
         button = input("""You are a wanderer pulled into an ancient dungeon
 beneath a ruined kingdom.
 
@@ -38,50 +38,132 @@ Good luck.
 ==================================================
 
 Enter X to begin...""")
+        
+       
+    if button == "X" or button == "x":
+        name = input("[you wake up in a dark cave and an old man walks out of the dark] Where did you come from? we dont see many poeple down here these days. What is your name?:" )
+        if name is not None:
+            print(f"hello! {name}. You look like a strong warrior, maybe you can help us. You are in a dungeon filled with monsters, the only way to leave is to defeat the king. here {name} take this blade and fight if you want to leave")
+    return name
+
+
+#gamestate
+def movecommand():
+    #get current room
+    #get adjacent rooms
+    #move to room command
     pass
-print(showintro())
-def gameloop(gamelog):
-    if gamelog == "help":
-        print("")
-    elif gamelog == "inventory":
-        print(f"here is your current inventory {Hero.inventory()}")
-    elif gamelog == "look":
-        pass
-    elif gamelog == "exit":
-        pass
-    elif gamelog == "fight":
-        pass
-    elif gamelog == "use":
-        pass
-    elif gamelog == "quest":
-        pass
-    elif gamelog == "path":
-        print ("")
+
+def usecmd():
+    #call the inventory
+    #let the user choose
+    #use the item on entity
+    pass
+def lookcmd():
+    #display current room
+    pass
+
+def questcmd():
+    #get current quests
+    pass
+
+def healthcmd():
+    #from hero get health
+    #if enemy attacks get attack dmg - player health
+    #display health
+    pass
+def winloss():
+    # if health <= 0 gameover
+        #else pass
+    pass
+def fightcmd():
+    #get item
+    #get item dmg
+    #get enemy health
+    #enemy health - item dmg
+    #get enemy dmg
+    #enemy dmg - hero health
+    #block / enemy dmg by 50% to 100% random
+    pass
     
-userinput = ""
-gameloop(userinput)
+def show_inventory(hero):
+    if len(hero.inventory) == 0:
+        print("your inventory is empty")
+    else:
+        print("here are the items in your inventory")
+        for i in hero.inventory:
+            print(i)
+    pass
+
+def use_item(hero):
+    items = []
+    for i in hero.inventory:
+        items.append(i)
+
+    input(f"what item would you like to use?{items}")
+    #call use item function
+    pass
 
 
-game_state = {
+
+
+
+def gameloop(game_state):
+    while game_state["game_over"] == False:
+        command = input("what do you do?:")
+        if command == "help":
+            print("Commands: look, move, fight, inventory, use, quest, path, help, exit")
+        elif command == "inventory":
+            show_inventory(game_state["hero"])
+        elif command == "look":
+            print(f"You are currently in the {game_state['current_room']}.")
+        elif command == "exit":
+            print("You leave the dungeon behind.")
+            game_state["game_over"] = True
+        elif command == "fight":
+            pass
+        elif command == "use":
+            pass
+        elif command == "quest":
+            pass
+        elif command == "path":
+            print ("")
+        elif command == "move":
+            move = input("where would you like to go?")
+            #movecommand(move)
+        
+        game_state["turn_count"] += 1
+
+    
+
+def main():
+    name = showintro()
+    data = load_game_data("game_data.json")
+    
+    hero = Hero(name, data)
+    
+    game_state = {
         "hero": hero,
         "current_room": "tavern",
         "game_over": False,
         "victory": False,
         "turn_count": 0,
         "visited_rooms": set()
-    }
+        }
+    hero.inventory.append("Old Blade")
+    if len(hero.inventory) == 0:
+        print("Your inventory is empty.")
+    else:
+        print("Inventory:")
+        for item in hero.inventory:
+            print(f"- {item}")
+
+    gameloop(game_state)
+main()
 
 
-def main():
-    data = load_game_data("game_data.json")
-    hero = Hero(name, data)
-    name = None
 
-    if button == "X" or "x":
-        name = print(input("[you wake up in a dark cave and an old man walks out of the dark] Where did you come from? we dont see many poeple down here these days. What is your name?:" ))
-        if name is not None:
-            print(f"hello! {name}. You look like a strong warrior, maybe you can help us. You are in a dungeon filled with monsters, the only way to leave is to defeat the king. here {name} take this blade and fight if you want to leave")
-
+    
 #load game data
 #create hero
 #set starting room
