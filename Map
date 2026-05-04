@@ -1,0 +1,110 @@
+lass DungeonWorld:
+
+    def __init__(self):
+        
+        self.rooms = {}
+
+    def add_room(self, name):
+
+        if name not in self.rooms:
+            self.rooms[name] = []
+
+
+    def connect_rooms(self, r1, r2):
+        self.add_room(r1)
+        self.add_room(r2)
+
+        if r2 not in self.rooms[r1]:
+            self.rooms[r1].append(r2)
+
+        if r1 not in self.rooms[r2]:
+            self.rooms[r2].append(r1)
+
+    def show_world(self):
+        print("DUNGEON WORLD MAP")
+        print("")
+
+        for room in self.rooms:
+            neighbors = self.rooms[room]
+
+            if len(neighbors) == 0:
+                print(room + " does not connect to anything")
+            else:
+                
+                print(room + " connects to " + ", ".join(neighbors))
+
+    def dfs_find_path(self, start, goal):
+
+        if start not in self.rooms:
+            print("Start room missing:", start)
+            return None
+
+        if goal not in self.rooms:
+            print("Goal room missing:", goal)
+            return None
+
+        visited = set()
+        path = []
+
+        def dfs(room):
+            visited.add(room)
+            path.append(room)
+
+            if room == goal:
+                return True
+
+            for nxt in self.rooms[room]:
+                if nxt not in visited:
+                    result = dfs(nxt)
+
+                    if result:
+                        return True
+
+            path.pop()
+            return False
+
+        found = dfs(start)
+
+        if found:
+            return path
+        else:
+            return None
+
+def build_dungeon_world():
+    dungeon = DungeonWorld()
+
+    dungeon.connect_rooms("Entrance", "Hallway")
+    dungeon.connect_rooms("Entrance", "Armory")
+
+    dungeon.connect_rooms("Hallway", "Library")
+    dungeon.connect_rooms("Hallway", "Trap Room")
+
+    dungeon.connect_rooms("Armory", "Dungeon")
+    dungeon.connect_rooms("Trap Room", "Dungeon")
+    
+    dungeon.connect_rooms("Library", "Treasure Room")
+    dungeon.connect_rooms("Dungeon", "Boss Room")
+
+    return dungeon
+
+
+def run_world_test():
+    dungeon = build_dungeon_world()
+
+    dungeon.show_world()
+
+    print("DFS TEST")
+    print("Trying to get from Entrance -> Boss Room...")
+
+    path_to_boss = dungeon.dfs_find_path("Entrance", "Boss Room")
+
+    if path_to_boss != None:
+        print("DFS found a path:")
+        print(" -> ".join(path_to_boss))
+        print("Looks playable")
+    else:
+        print("No path found...")
+        print("Something is probably disconnected.")
+
+if __name__ == "__main__":
+    run_world_test()
