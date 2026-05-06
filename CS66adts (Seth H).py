@@ -1,6 +1,10 @@
 import random
 import json
+from tkinter import N
 
+from annotated_types import LowerCase
+
+#Reads the json file for the loot table
 with open("loot_table.json", 'r') as f:
     loot_table = json.load(f)
 
@@ -88,15 +92,20 @@ class Combat:
     
 #ADT for mob drops
 class Looting:
-    def __init__(self, loot_table = loot_table): #Made loot_table lt (loot_table.json) a fixed parameter since thats the only loot table I want to pull from
+    def __init__(self, loot_table = loot_table): #Made loot_table (loot_table.json) a fixed parameter since thats the only loot table I want to pull from
+        self.coins = 0 #Placeholder until you can get the Heros coins
         self.loot_table = loot_table
         self.temp_roll = 0
         self.loot = None
+        
 
     def roll_100(self): #A 100 sided dice to make rarities easier to distinguish
         roll = random.randint(1,100)
         return roll
 
+    def enemy_coin_drop(self):
+        self.coins += 50
+        return self.coins
 
     #What loot any enemy will drop after defeat
     def enemy_drop(self):
@@ -104,11 +113,12 @@ class Looting:
 
         #When the enemy is dead
         if enemy_hp == 0:
+            self.coins += self.enemy_coin_drop()
             roll = self.roll_100()
 
             #45% to get a Common item
             if roll >= 1 and roll <= 45:
-                self.loot = random.choice(self.loot_table["loot"]["common"])#Chooses a random item from the common list
+                self.loot = random.choice(self.loot_table["loot"]["common"])#Chooses a random item from the common list 
 
             #35% to get an Uncommon item
             elif roll >= 46 and roll <= 80:
@@ -132,14 +142,141 @@ class Looting:
 
 
 #Unit tests to see if the Looting class works
-lt = Looting(loot_table)
+#lt = Looting(loot_table)
 
-print(lt.roll_100()) #does not affect the outcome of enemy_drop
+#print(lt.roll_100()) #does not affect the outcome of enemy_drop
 
-drop = lt.enemy_drop()
+#drop = lt.enemy_drop()
 
-if drop['type'] == "Weapon": 
-    print(f"You got: {drop['name']} ({drop['rarity']}), Deals: {drop['damage']} damage!")
+#if drop['type'] == "Weapon": 
+    #print(f"You got: {drop['name']} ({drop['rarity']}), Deals: {drop['damage']} damage!")
 
-if drop['type'] == "Potion":
-    print(f"You got: {drop['name']} ({drop['rarity']}), Heals: {drop['heal']} damage!")
+#if drop['type'] == "Potion":
+    #print(f"You got: {drop['name']} ({drop['rarity']}), Heals: {drop['heal']} health!")
+
+#print(drop)
+
+class Shop:
+    def __init__(self, hero_coins, inventory):
+        self.coins = hero_coins #Takes the value of however many
+        self.inventory = inventory #To add items you buy or sell items you want for money
+        first_time = True
+        stay = True
+
+        if first_time == True:
+            #Could create some cool dialogue to welcome the player for the first time
+            print("Cool!")
+            first_time = False
+
+        else:
+            print("Welcome Back!")
+
+        #Infinite loop in case you want to buy or sell more items
+        while stay == True:
+            option = input("----------------------------------------------------\n"
+                "What would you like to do? (Buy, Sell, Leave) ")
+
+            if option.lower() == "buy":
+                self.buy()
+            
+            elif option.lower() == "sell":
+                self.sell()
+
+            elif option.lower() == "leave":
+                stay = False
+
+    def buy(self):
+        #Can only buy potions for now but could add something else later
+        choice = input("----------------------------------------------------\n"
+        f"What would you like to buy? Coins Available: {self.coins}\n"
+        "----------------------------------------------------\n"
+        "1. Small Potion: 100 Coins\n" 
+        "2. Medium Potion: 200 Coins\n" 
+        "3. Large Potion: 300 Coins\n" 
+        "4. Big Potion: 400 Coins\n" 
+        "5. Super Potion: 500 Coins\n"
+        "6. Back: ")
+        
+        #Buying a Small Potion
+        if choice == "1":
+            if self.coins >= 100:
+                self.coins -= 100 #Takes 100 coins from the player
+                print("Thank you for your purchase!")
+                self.inventory.append(loot_table["loot"]["common"][1]) #Puts the Small Potion in the players inventory
+
+            else:
+                print("You dont have enough coins.")
+
+        #Buying a Medium Potion
+        elif choice == "2":
+            if self.coins >= 200:
+                self.coins -= 200 #Takes 200 coins from the player
+                print("Thank you for your purchase!")
+                self.inventory.append(loot_table["loot"]["uncommon"][1])#Puts the Medium Potion in the players inventory
+
+            else:
+                print("You dont have enough coins.")
+
+        #Buing a Large Potion
+        elif choice == "3":
+            if self.coins >= 300:
+                self.coins -= 300 #Takes 300 coins from the player
+                print("Thank you for your purchase!")
+                self.inventory.append(loot_table["loot"]["rare"][1])#Puts the Large Potion in the players inventory
+
+            else:
+                print("You dont have enough coins.")
+
+        #Buying a Big Potion
+        elif choice == "4":
+            if self.coins >= 400:
+                self.coins -= 400 #Takes 400 coins from the player
+                print("Thank you for your purchase!")
+                self.inventory.append(loot_table["loot"]["epic"][1])#Puts the Big Potion in the players inventory
+
+            else:
+                print("You dont have enough coins.")
+
+        #Buying a Super Potion
+        elif choice == "5":
+            if self.coins >= 500:
+                self.coins -= 500 #Takes 500 coins from the player
+                print("Thank you for your purchase!")
+                self.inventory.append(loot_table["loot"]["legendary"][1])#Puts the Super Potion in the players inventory
+
+            else:
+                print("You dont have enough coins.")
+
+        #Leaves the buying station
+        elif choice.lower() == "6" or "back":
+            pass
+
+        else:
+            pass
+
+    def sell(self):
+        print("----------------------------------------------------")
+        for item in self.inventory:
+            print(f"{item["name"]}: {item["value"]} coins")
+        choice = input("----------------------------------------------------\n"
+            "What would you like to sell?\n").strip().lower()#Strip makes sure there are no extra or unnecessary spaces or lines for the item, lower makes it easier to find the item you are looking for
+        
+        for item in self.inventory:
+            #Can check for any item
+            if item["name"].lower() == choice:
+                #You cant sell an item if it doesn't have a value
+                if item["value"] is "None":
+                    print("You cant sell that item.")
+                    break #so the sell() function doesn't keep running
+                else:
+                    #Sells the item and removes it from the inventory
+                    self.coins += item["value"]
+                    self.inventory.remove(item)#Pop needs a position where remove can remove an item based off of a name
+                    print("Thank you for your sale!")
+
+                
+
+                
+        
+
+Shop(500,[{"name": "Rusty Sword", "type": "Weapon", "rarity": "Common", "damage": 7, "value": 50},{"name": "Bone Sword", "type": "Weapon", "rarity": "Uncommon", "damage": 12, "value": 150}])

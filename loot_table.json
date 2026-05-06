@@ -1,27 +1,27 @@
 {
     "loot":{
         "common":[
-            {"name": "Rusty Sword", "type": "Weapon", "rarity": "Common", "damage": 7},
-            {"name": "Small Potion", "type": "Potion", "rarity": "Common", "heal": 10}
+            {"name": "Rusty Sword", "type": "Weapon", "rarity": "Common", "damage": 7, "value": 50},
+            {"name": "Small Potion", "type": "Potion", "rarity": "Common", "heal": 10, "value": "None"}
         ],
 
         "uncommon": [
-            {"name": "Bone Sword", "type": "Weapon", "rarity": "Uncommon", "damage": 12},
-            {"name": "Medium Potion", "type": "Potion", "rarity": "Uncommon", "heal": 20}
+            {"name": "Bone Sword", "type": "Weapon", "rarity": "Uncommon", "damage": 12, "value": 150},
+            {"name": "Medium Potion", "type": "Potion", "rarity": "Uncommon", "heal": 20, "value": "None"}
         ],
         
         "rare":[
-            {"name": "Iron Sword", "type": "Weapon", "rarity": "Rare", "damage": 15},
-            {"name": "Large Potion", "type": "Potion", "rarity": "Rare", "heal": 30}
+            {"name": "Iron Sword", "type": "Weapon", "rarity": "Rare", "damage": 15, "value": 250},
+            {"name": "Large Potion", "type": "Potion", "rarity": "Rare", "heal": 30, "value": "None"}
         ],
 
         "epic":[
-            {"name": "Blade of Flesh", "type": "Weapon", "rarity": "Epic", "damage": 20},
-            {"name": "Big Potion", "type": "Potion", "rarity": "Epic", "heal": 50}
+            {"name": "Blade of Flesh", "type": "Weapon", "rarity": "Epic", "damage": 20, "value": 350},
+            {"name": "Big Potion", "type": "Potion", "rarity": "Epic", "heal": 50, "value": "None"}
         ],
         "legendary":[
-            {"name": "Blade of the Pheonix", "type": "Weapon", "rarity": "Legendary", "Damage": 25},
-            {"name": "Super Potion", "type": "Potion", "rarity": "Legendary", "heal": 75}
+            {"name": "Blade of the Pheonix", "type": "Weapon", "rarity": "Legendary", "Damage": 25, "value": 450},
+            {"name": "Super Potion", "type": "Potion", "rarity": "Legendary", "heal": 75, "value": "None"}
         ]
     }
 }    
