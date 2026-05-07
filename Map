@@ -1,6 +1,3 @@
-#world + dfs part
-#this handles the dungeon map and checks if rooms are actually connected
-
 class DungeonWorld:
 
     def __init__(self):
@@ -10,7 +7,7 @@ class DungeonWorld:
 
     def add_room(self, name):
         #adds a room if it doesn't already exist
-        #prevents overwriting or duplicates
+        #prevents duplicates
         if name not in self.rooms:
             self.rooms[name] = []
 
@@ -26,7 +23,7 @@ class DungeonWorld:
             self.rooms[r1].append(r2)
 
         #add r1 as a neighbor of r2 (so movement is both ways)
-        #this makes the graph undirected
+        #this makes the graphs directions
         if r1 not in self.rooms[r2]:
             self.rooms[r2].append(r1)
 
@@ -97,7 +94,7 @@ class DungeonWorld:
 
 def build_dungeon_world():
     #build the actual dungeon layout
-    #basically defining how rooms connect
+    #defining how rooms connect
 
     dungeon = DungeonWorld()
 
