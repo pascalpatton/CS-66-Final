@@ -1,87 +1,119 @@
-lass DungeonWorld:
+#world + dfs part
+#this handles the dungeon map and checks if rooms are actually connected
+
+class DungeonWorld:
 
     def __init__(self):
-        
+        #main map structure
+        #each room maps to a list of rooms you can go to
         self.rooms = {}
 
     def add_room(self, name):
-
+        #adds a room if it doesn't already exist
+        #prevents overwriting or duplicates
         if name not in self.rooms:
             self.rooms[name] = []
 
-
     def connect_rooms(self, r1, r2):
+        #connect two rooms together
+
+        #make sure both rooms exist first
         self.add_room(r1)
         self.add_room(r2)
 
+        #add r2 as a neighbor of r1
         if r2 not in self.rooms[r1]:
             self.rooms[r1].append(r2)
 
+        #add r1 as a neighbor of r2 (so movement is both ways)
+        #this makes the graph undirected
         if r1 not in self.rooms[r2]:
             self.rooms[r2].append(r1)
 
     def show_world(self):
+        #prints out all rooms + their connections
+        #used for debugging and checking map layout
+
         print("DUNGEON WORLD MAP")
         print("")
 
         for room in self.rooms:
             neighbors = self.rooms[room]
 
+            #if nothing is connected, that room is isolated (bad)
             if len(neighbors) == 0:
                 print(room + " does not connect to anything")
             else:
-                
-                print(room + " connects to " + ", ".join(neighbors))
+                #join neighbors into one readable line
+                print(room + " connects to " + str(neighbors))
 
     def dfs_find_path(self, start, goal):
+        #depth first search to find a path from start goal
 
+        #basic checks so we don't search invalid rooms
         if start not in self.rooms:
-            print("Start room missing:", start)
+            print("start room missing:", start)
             return None
 
         if goal not in self.rooms:
-            print("Goal room missing:", goal)
+            print("goal room missing:", goal)
             return None
 
-        visited = set()
-        path = []
+        visited = set()   #keeps track of rooms we've already been to
+        path = []         #current path we are building
 
         def dfs(room):
+            #mark room as visited so we don't loop forever
             visited.add(room)
+
+            #add current room to path
             path.append(room)
 
+            #if we hit the goal, we are done
             if room == goal:
                 return True
 
+            #try going deeper into each connected room
             for nxt in self.rooms[room]:
                 if nxt not in visited:
-                    result = dfs(nxt)
+                    found = dfs(nxt)
 
-                    if result:
+                    #if goal found in that branch, stop searching
+                    if found:
                         return True
 
+            #if no path worked, backtrack
+            #remove this room from path and try a different route
             path.pop()
             return False
 
-        found = dfs(start)
-
-        if found:
+        #start dfs from the starting room
+        if dfs(start):
             return path
-        else:
-            return None
+
+        #no path found
+        return None
+
 
 def build_dungeon_world():
+    #build the actual dungeon layout
+    #basically defining how rooms connect
+
     dungeon = DungeonWorld()
 
+    #starting area
     dungeon.connect_rooms("Entrance", "Hallway")
     dungeon.connect_rooms("Entrance", "Armory")
 
+    #middle rooms / branching paths
     dungeon.connect_rooms("Hallway", "Library")
     dungeon.connect_rooms("Hallway", "Trap Room")
 
+    #paths that lead toward the boss
     dungeon.connect_rooms("Armory", "Dungeon")
     dungeon.connect_rooms("Trap Room", "Dungeon")
-    
+
+    #side room + final boss room
     dungeon.connect_rooms("Library", "Treasure Room")
     dungeon.connect_rooms("Dungeon", "Boss Room")
 
@@ -89,22 +121,27 @@ def build_dungeon_world():
 
 
 def run_world_test():
+    #quick test to make sure the map works before gameplay
+
     dungeon = build_dungeon_world()
 
+    #print out map to visually check connections
     dungeon.show_world()
 
     print("DFS TEST")
     print("Trying to get from Entrance -> Boss Room...")
 
+    #run dfs to see if boss room is reachable
     path_to_boss = dungeon.dfs_find_path("Entrance", "Boss Room")
 
-    if path_to_boss != None:
+    if path_to_boss is not None:
         print("DFS found a path:")
         print(" -> ".join(path_to_boss))
         print("Looks playable")
     else:
         print("No path found...")
-        print("Something is probably disconnected.")
+        print("something is probably disconnected")
 
-if __name__ == "__main__":
-    run_world_test()
+#run test
+run_world_test()
+
