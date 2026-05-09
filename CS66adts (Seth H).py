@@ -257,7 +257,7 @@ class Shop:
     def sell(self):
         print("----------------------------------------------------")
         for item in self.inventory:
-            print(f"{item["name"]}: {item["value"]} coins")
+            print(f"{item['name']}: {item['value']} coins")
         choice = input("----------------------------------------------------\n"
             "What would you like to sell?\n").strip().lower()#Strip makes sure there are no extra or unnecessary spaces or lines for the item, lower makes it easier to find the item you are looking for
         
@@ -279,4 +279,3 @@ class Shop:
                 
         
 
-Shop(500,[{"name": "Rusty Sword", "type": "Weapon", "rarity": "Common", "damage": 7, "value": 50},{"name": "Bone Sword", "type": "Weapon", "rarity": "Uncommon", "damage": 12, "value": 150}])
